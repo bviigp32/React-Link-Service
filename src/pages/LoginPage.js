@@ -31,8 +31,6 @@ function LoginPage() {
     await axios.post('/auth/login', {
       email,
       password,
-    }, {
-      withCredentials: true,
     });
     navigate('/me');
   }
