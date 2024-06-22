@@ -1,0 +1,19 @@
+###
+POST https://learn.codeit.kr/api/link-service/users
+Content-Type: application/json
+
+{
+  "name" : "Alice",
+  "email" : "codeit@naver.com",
+  "password" : "123"
+}
+
+
+###
+POST https://learn.codeit.kr/api/link-service/auth/login
+Content-Type: application/json
+
+{
+  "email" : "codeit@naver.com",
+  "password" : "123"
+}

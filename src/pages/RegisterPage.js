@@ -1,21 +1,21 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from '../lib/axios';
-import Label from '../components/Label';
-import Input from '../components/Input';
-import Button from '../components/Button';
-import HorizontalRule from '../components/HorizontalRule';
-import Link from '../components/Link';
-import GoogleImage from '../assets/google.svg';
-import styles from './RegisterPage.module.css';
-import { useToaster } from '../contexts/ToasterProvider';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "../lib/axios";
+import Label from "../components/Label";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import HorizontalRule from "../components/HorizontalRule";
+import Link from "../components/Link";
+import GoogleImage from "../assets/google.svg";
+import styles from "./RegisterPage.module.css";
+import { useToaster } from "../contexts/ToasterProvider";
 
 function RegisterPage() {
   const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-    passwordRepeat: '',
+    name: "",
+    email: "",
+    password: "",
+    passwordRepeat: "",
   });
   const navigate = useNavigate();
   const toast = useToaster();
@@ -33,16 +33,32 @@ function RegisterPage() {
     e.preventDefault();
 
     if (values.password !== values.passwordRepeat) {
-      toast('warn', '비밀번호가 일치하지 않습니다.');
+      toast("warn", "비밀번호가 일치하지 않습니다.");
       return;
     }
     const { name, email, password } = values;
-    /**
-     * @TODO
-     * 서버에 회원을 생성한다
-     * 회원 생성이 성공하면 로그인을 시도한다
-     * 로그인이 성공하면 `/me`로 이동한다
-     */
+
+    try {
+      await axios.post("/users", {
+        name,
+        email,
+        password,
+      });
+      // 회원 생성이 성공하면 로그인 페이지로 이동합니다.
+      navigate("/me");
+    } catch (error) {
+      if (error.response) {
+        // 서버 응답이 있는 경우
+        if (error.response.status === 409) {
+          toast("error", "이 이메일 주소는 이미 사용 중입니다.");
+        } else {
+          toast("error", `서버 오류: ${error.response.data.error}`);
+        }
+      } else {
+        // 네트워크 오류 등 서버 응답이 없는 경우
+        toast("error", "네트워크 오류가 발생했습니다. 나중에 다시 시도하세요.");
+      }
+    }
   }
 
   return (
